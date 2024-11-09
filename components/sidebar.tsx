@@ -70,8 +70,6 @@ export default function Sidebar({ onGroupSelect }: SidebarProps) {
         filter: { name: { eq: groupName } }
       }).then((res) => res.data);
 
-      console.log({ group });
-
       const groupId =
         group?.id ??
         (await client.models.Group.create({
