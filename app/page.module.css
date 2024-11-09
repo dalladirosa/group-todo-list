@@ -1,10 +1,12 @@
-.main {
+.container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6rem;
   min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  margin-left: 300px;
 }
 
 .description {
@@ -81,12 +83,25 @@
   gap: 4rem;
 }
 
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todo button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     background: rgba(var(--card-rgb), 0.1);
     border: 1px solid rgba(var(--card-border-rgb), 0.15);
-    box-shadow: 0px 4px 12px 0px #CBBEFF;
+    box-shadow: 0px 4px 12px 0px #cbbeff;
   }
 
   .card:hover span {
@@ -195,7 +210,6 @@
     filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
   }
 }
-
 
 @keyframes rotate {
   from {

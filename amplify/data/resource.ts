@@ -1,4 +1,4 @@
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -7,11 +7,35 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  GroupMember: a
+    .model({
+      groupId: a.id().required(),
+      memberId: a.id().required(),
+      group: a.belongsTo('Group', 'groupId'),
+      member: a.belongsTo('Member', 'memberId')
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  Member: a
+    .model({
+      userId: a.id().required(),
+      groups: a.hasMany('GroupMember', 'memberId')
+    })
+    .authorization((allow) => [allow.authenticated()]),
+  Group: a
+    .model({
+      name: a.string(),
+      members: a.hasMany('GroupMember', 'groupId'),
+      todos: a.hasMany('Todo', 'groupId')
+    })
+    .authorization((allow) => [allow.authenticated()]),
+
   Todo: a
     .model({
       content: a.string(),
+      groupId: a.id().required(),
+      group: a.belongsTo('Group', 'groupId')
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow) => [allow.authenticated()])
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -19,11 +43,8 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
-  },
+    defaultAuthorizationMode: 'userPool'
+  }
 });
 
 /*== STEP 2 ===============================================================
@@ -31,7 +52,7 @@ Go to your frontend source code. From your client-side code, generate a
 Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
 WORK IN THE FRONTEND CODE FILE.)
 
-Using JavaScript or Next.js React Server Components, Middleware, Server 
+Using JavaScript or Next.js React Server Components, Middleware, Server
 Actions or Pages Router? Review how to generate Data clients for those use
 cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
